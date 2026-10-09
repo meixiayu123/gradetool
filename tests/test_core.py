@@ -56,8 +56,9 @@ class StatisticsTest(unittest.TestCase):
     def test_median_ignores_input_order(self):
         self.assertAlmostEqual(median([100, 70, 90, 85]), median([70, 85, 90, 100]))
 
-    def test_median_of_even_list(self):
+    def test_median_of_even_list_takes_average_of_two_middle(self):
         self.assertAlmostEqual(median([70, 85, 90, 100]), 87.5)
+        self.assertAlmostEqual(median([60, 80]), 70.0)
 
     def test_spread(self):
         self.assertEqual(spread([90, 60, 75]), (60, 90))
@@ -144,6 +145,10 @@ class SummarizeTest(unittest.TestCase):
         self.assertAlmostEqual(stats["pass_line"], 80.0)
         self.assertAlmostEqual(stats["pass_rate"], 2 / 3)
 
+    def test_custom_pass_line_affects_distribution_summary(self):
+        # 及格线提到 80 后，80 分以下都不算及格，这个用例可以防止 pass_line 被中途丢掉
+        stats = summarize([95, 85, 75, 65], pass_line=80)
+        self.assertAlmostEqual(stats["pass_rate"], 0.5)
 
 
 if __name__ == "__main__":

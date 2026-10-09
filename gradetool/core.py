@@ -40,11 +40,17 @@ def mean(scores):
 
 
 def median(scores):
-    """返回中位数；空列表返回 0.0。"""
+    """返回中位数；空列表返回 0.0。
+
+    约定：分数个数为偶数时，取中间两个数的平均值。
+    """
     if not scores:
         return 0.0
     ordered = sorted(scores)
-    return ordered[len(ordered) // 2]
+    middle = len(ordered) // 2
+    if len(ordered) % 2 == 1:
+        return ordered[middle]
+    return (ordered[middle - 1] + ordered[middle]) / 2
 
 
 def spread(scores):
@@ -106,10 +112,10 @@ def grade_distribution(scores):
     return buckets
 
 
-def grade_summary(scores):
+def grade_summary(scores, pass_line=60.0):
     """把及格率、平均绩点和等级分布打包起来，供输出层使用。"""
     return {
-        "pass_rate": pass_rate(scores),
+        "pass_rate": pass_rate(scores, pass_line),
         "gpa": gpa(scores),
         "grades": grade_distribution(scores),
     }
@@ -127,6 +133,6 @@ def summarize(scores, pass_line=60.0, with_grade=True):
         "std": std_dev(scores),
     }
     if with_grade:
-        stats.update(grade_summary(scores))
+        stats.update(grade_summary(scores, pass_line))
         stats["pass_line"] = pass_line
     return stats
